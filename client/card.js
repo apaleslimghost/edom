@@ -58,12 +58,16 @@ const connectAddRelated = withTracker(({card, exclude}) => ({
 	}
 }));
 
-const AddRelated = connectAddRelated(({cards = [], addRelated}) => cards.length ? <v.Select small defaultValue='' onChange={addRelated}>
+const NarrowSelect = v.Select.extend`
+	max-width: 7em;
+`;
+
+const AddRelated = connectAddRelated(({cards = [], addRelated}) => cards.length ? <NarrowSelect small defaultValue='' onChange={addRelated}>
 	<option value='' disabled>Link...</option>
 	{cards.map(
 		card => <option value={card._id} key={card._id}>{card.title}</option>
 	)}
-</v.Select> : null);
+</NarrowSelect> : null);
 
 const Vertical = v.Box.extend`
 	position: relative;
