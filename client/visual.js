@@ -34,7 +34,7 @@ export const Tag = styled.button`
 `;
 
 export const niceColors = [
-	'cornflowerblue',
+	'darkcyan',
 	'mediumseagreen',
 	'darkorange',
 	'crimson',
@@ -43,6 +43,9 @@ export const niceColors = [
 	'tomato',
 	'steelblue',
 	'forestgreen',
+	'goldenrod',
+	'indianred',
+	'yellowgreen'
 ];
 
 export const ColoredTag = ({children, ...props}) => <Tag {...props} color={niceColors[stringHash(children) % niceColors.length]}>{children}</Tag>
