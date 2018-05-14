@@ -2,6 +2,7 @@ import React from 'react';
 import {Session} from 'meteor/session';
 import orderBy from 'lodash.orderby';
 import {withTracker} from 'meteor/react-meteor-data';
+import styled from 'styled-components';
 
 import * as v from './visual';
 import {Cards} from '../shared/collections';
@@ -46,18 +47,51 @@ const connectCardList = withTracker(() => {
 		});
 	}
 
+	const linkedCards = cards.filter(c => typeof c.sortedIndex !== 'undefined');
+	const unlinkedCards = cards.filter(c => typeof c.sortedIndex === 'undefined');
+
+	const sortCards = cards => orderBy(
+		cards,
+		['sortedIndex', 'related.length', 'text.length', 'title'],
+		['asc',         'desc',           'desc',        'asc']
+	).filter(
+		c => emptyFilter || c.tags.some(
+			t => filterTags.has(t)
+		)
+	);
+
 	return {
-		cards: orderBy(cards, ['sortedIndex', 'text.length', 'title'], ['asc', 'desc', 'asc']).filter(c => emptyFilter || c.tags.some(t => filterTags.has(t))),
+		cards: sortCards(unlinkedCards),
+		linkedCards: sortCards(linkedCards),
 		addCard(card) {
 			Cards.insert(card);
 		}
 	};
 });
 
-const CardList = connectCardList(({cards, addCard}) => <v.Grid>
-	{cards.map(card => <Card key={card._id} {...card} />)}
+const Split = styled.hr`
+	border: 0 none;
+	border-top: 1px solid lightgrey;
+`;
 
-	<EditCard />
-</v.Grid>);
+const CardList = connectCardList(({cards, linkedCards, addCard}) => linkedCards.length
+	? <>
+		<v.Grid>
+			<EditCard />
+
+			{linkedCards.map(card => <Card key={card._id} {...card} />)}
+		</v.Grid>
+		{!!cards.length && <>
+			<Split />
+			<v.Grid>
+				{cards.map(card => <Card key={card._id} {...card} />)}
+			</v.Grid>
+		</>}
+	</>
+	: <v.Grid>
+		<EditCard />
+
+		{cards.map(card => <Card key={card._id} {...card} />)}
+	</v.Grid>);
 
 export default CardList;
