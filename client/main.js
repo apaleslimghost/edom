@@ -8,6 +8,7 @@ import formJson from '@quarterto/form-json';
 import {Cards} from '../shared/collections';
 import Markdown from 'react-markdown';
 import {compose, withState, branch, renderComponent} from 'recompact';
+import stringHash from 'string-hash';
 
 const prevent = fn => ev => {
 	ev.preventDefault();
@@ -32,7 +33,6 @@ injectGlobal`
 		box-sizing: border-box;
 	}
 `;
-
 
 const distances = (graph, start, visited = {[start]: 0}, depth = 1) => {
 	const next = graph[start];
@@ -72,7 +72,7 @@ const withCardListActions = withTracker(() => {
 	}
 
 	return {
-		cards: orderBy(cards, ['sortedIndex', 'title']),
+		cards: orderBy(cards, ['sortedIndex', 'text.length', 'title'], ['asc', 'desc', 'asc']),
 		addCard(card) {
 			Cards.insert(card);
 		}
@@ -84,9 +84,12 @@ const box = css`
 	border-radius: 2px;
 `;
 
-const Grid = styled.div`
+const Pad = styled.div`
+	margin: 1em;
+`;
+
+const Grid = Pad.extend`
 	display: grid;
-	padding: 1em;
 	grid-gap: 1em;
 	grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
 `;
@@ -96,7 +99,9 @@ const Box = styled.div`
 	padding: 1em;
 `;
 
-const Tag = styled.a`
+const Tag = styled.button`
+	cursor: pointer;
+	border: 0 none;
 	background: ${({color}) => color || 'dodgerblue'};
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
 	font-size: 0.8em;
@@ -105,16 +110,44 @@ const Tag = styled.a`
 	padding: .25em;
 `;
 
+const niceColors = [
+	'dodgerblue',
+	'mediumseagreen',
+	'darkorange',
+	'crimson',
+	'darkorchid',
+	'mediumvioletred',
+	'tomato',
+	'steelblue',
+	'forestgreen',
+];
+
+const ColoredTag = ({children, ...props}) => <Tag {...props} color={niceColors[stringHash(children) % niceColors.length]}>{children}</Tag>
+
 const Input = styled.input`
 	${box}
 	font: inherit;
 	font-weight: normal;
+	font-size: ${({small}) => small ? '0.8em' : 'inherit'};
 	padding: .25em;
 `;
 
 const Textarea = Input.withComponent('textarea').extend`
 	width: 100%;
 	resize: vertical;
+`;
+
+const Select = Input.withComponent('select').extend`
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' width='10' height='5'%3E%3Cpath d='M 5,5 0,0 10,0 Z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-size: 0.5em 0.25em;
+	background-position: right 0.5em center;
+	appearance: none;
+	padding-right: 1.5em;
+
+	&:invalid {
+		color: rgba(0, 0, 0, 0.6);
+	}
 `;
 
 const Label = styled.label`
@@ -129,10 +162,20 @@ const Label = styled.label`
 	}
 `;
 
-const Button = Tag.withComponent('button').extend`
-	border: 0 none;
+const Button = Tag.extend`
+	box-shadow: inset 0 -.5px 0 .5px rgba(0, 0, 0, 0.5);
 	font-size: 1em;
 	padding: .25em .5em;
+
+	&:hover {
+		box-shadow: inset 0 -1px 0 .5px rgba(0, 0, 0, 0.5);
+		filter: contrast(150%);
+	}
+
+	&:active {
+		box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, 0.5);
+		filter: contrast(80%);
+	}
 `;
 
 const Title = styled.h2`
@@ -156,7 +199,30 @@ const withRelated = withTracker(({_id, related}) => ({
 		Cards.update(_id, {
 			$pull: {related}
 		})
+	},
+
+	addTag(ev) {
+		const {tag} = getFormData(ev);
+		Cards.update(_id, {
+			$addToSet: {tags: tag}
+		});
+	},
+
+	removeTag(tag) {
+		console.log(tag);
+		Cards.update(_id, {
+			$pull: {tags: tag}
+		});
 	}
+}));
+
+const withAllTags = withTracker(() => ({
+	allTags: Array.from(
+		Cards.find().fetch().reduce((allTags, {tags = []}) => {
+			tags.forEach(tag => allTags.add(tag));
+			return allTags;
+		}, new Set)
+	),
 }));
 
 const withAddRelated = withTracker(({card, exclude}) => ({
@@ -178,23 +244,32 @@ const List = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
+	margin-bottom: .25em;
 
 	& > * {
+		margin-bottom: .25em;
 		margin-right: .25em;
 	}
 `
 
-const AddRelated = withAddRelated(({cards = [], addRelated}) => cards.length ? <select defaultValue='' onChange={addRelated}>
-	<option value='' disabled>Add relationship...</option>
+const AddRelated = withAddRelated(({cards = [], addRelated}) => cards.length ? <Select small defaultValue='' onChange={addRelated}>
+	<option value='' disabled>Link...</option>
 	{cards.map(
 		card => <option value={card._id} key={card._id}>{card.title}</option>
 	)}
-</select> : null);
+</Select> : null);
 
-const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, setEditing, setSelected, removeRelated}) => <Box>
+const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, tags = [], setEditing, setSelected, removeRelated, addTag, removeTag}) => <Box>
 	<Right><Button onClick={() => setEditing(true)}>✎</Button></Right>
 	<Title><a href={`#${_id}`} onClick={setSelected}>{title}</a></Title>
 	<Markdown source={text} />
+
+	<List>
+		{tags.map(tag => <ColoredTag key={tag} onClick={() => removeTag(tag)}>{tag}</ColoredTag>)}
+		<form onSubmit={addTag}>
+			<Input placeholder='Tag...' size={7} name='tag' list='tags-list' small />
+		</form>
+	</List>
 
 	<List>
 		{relatedCards.map(card => <Tag key={card._id} onClick={() => removeRelated(card._id)}>{card.title}</Tag>)}
@@ -239,10 +314,25 @@ const CardList = withCardListActions(({cards, addCard}) => <Grid>
 	<EditCard />
 </Grid>);
 
+const AllTags = withAllTags(({allTags}) => <Pad>
+	<List>
+		{allTags.map(tag => <ColoredTag key={tag}>{tag}</ColoredTag>)}
+	</List>
+
+	<datalist id='tags-list'>
+		{allTags.map(tag => <option key={tag} value={tag} />)}
+	</datalist>
+</Pad>);
+
+const App = () => <main>
+	<AllTags />
+	<CardList />
+</main>;
+
 Meteor.startup(() => {
 	if(location.hash) {
 		Session.set('selectedCard', location.hash.slice(1));
 	}
 
-	render(<CardList />, document.getElementById('root'));
+	render(<App />, document.getElementById('root'));
 });
