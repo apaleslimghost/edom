@@ -34,7 +34,7 @@ export const Tag = styled.button`
 `;
 
 export const niceColors = [
-	'dodgerblue',
+	'cornflowerblue',
 	'mediumseagreen',
 	'darkorange',
 	'crimson',
