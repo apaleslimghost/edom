@@ -7,8 +7,10 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.42",
     "@quarterto/form-json": "^1.0.0",
+    "@quarterto/short-id": "^1.0.0",
     "lodash.orderby": "^4.6.0",
     "meteor-node-stubs": "^0.3.2",
+    "param-case": "^2.1.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-markdown": "^3.3.2",

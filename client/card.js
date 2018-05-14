@@ -8,6 +8,7 @@ import * as v from './visual';
 import prevent from './prevents-default';
 import getFormData from './form-data';
 import {Cards} from '../shared/collections';
+import slug from './slug';
 
 const connectCard = withTracker(({_id, related}) => ({
 	relatedCards: Cards.find({
@@ -158,6 +159,7 @@ const editCardAction = withTracker(({_id, title, setEditing, prelinked}) => ({
 		} else {
 			data.tags = Session.get('filterTags') || [];
 			data.related = prelinked ? [prelinked] : [];
+			data._id = slug(data.title);
 
 			Cards.insert(data, (err, _id) => {
 				if(prelinked && !err) {
