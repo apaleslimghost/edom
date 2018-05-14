@@ -15,7 +15,11 @@ const withRelated = withTracker(({_id, related}) => ({
 	}).fetch(),
 
 	setSelected() {
-		Session.set('selectedCard', _id);
+		if(Session.get('selectedCard') === _id) {
+			Session.set('selectedCard', null);
+		} else {
+			Session.set('selectedCard', _id);
+		}
 	},
 
 	removeRelated(related) {
@@ -113,7 +117,9 @@ const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards
 	</Bottom>
 </Vertical>);
 
-const editCardAction = withTracker(({_id, title, setEditing}) => ({
+const editCardAction = withTracker(({_id, title, setEditing, prelinked}) => ({
+	prelinkedCard: Cards.findOne(prelinked),
+
 	onSubmit(ev) {
 		const data = getFormData(ev);
 
@@ -121,7 +127,17 @@ const editCardAction = withTracker(({_id, title, setEditing}) => ({
 			Cards.update(_id, {$set: data});
 		} else {
 			data.tags = Session.get('filterTags') || [];
-			Cards.insert(data);
+			data.related = prelinked ? [prelinked] : [];
+
+			Cards.insert(data, (err, _id) => {
+				if(prelinked && !err) {
+					Cards.update(prelinked, {
+						$addToSet: {
+							related: _id,
+						},
+					});
+				}
+			});
 		}
 
 		setEditing && setEditing(false);
@@ -155,12 +171,13 @@ const FlexLabel = v.Label.extend`
 	}
 `;
 
-export const EditCard = editCardAction(({_id, deleteCard, title, text, onSubmit, setEditing}) => <v.Box>
+export const EditCard = editCardAction(({_id, deleteCard, title, text, onSubmit, setEditing, prelinkedCard}) => <v.Box>
 	<FlexForm onSubmit={onSubmit}>
 		<v.Label>Title <v.Input required name='title' defaultValue={title} /></v.Label>
 		<FlexLabel><v.Textarea name='text' defaultValue={text} rows={5} /></FlexLabel>
 
 		<v.List>
+			{prelinkedCard && <v.Tag>{prelinkedCard.title}</v.Tag>}
 			{_id && <v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button>}
 
 			<v.Right>

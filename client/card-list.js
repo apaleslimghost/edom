@@ -63,9 +63,7 @@ const connectCardList = withTracker(() => {
 	return {
 		cards: sortCards(unlinkedCards),
 		linkedCards: sortCards(linkedCards),
-		addCard(card) {
-			Cards.insert(card);
-		}
+		selectedCard,
 	};
 });
 
@@ -74,24 +72,20 @@ const Split = styled.hr`
 	border-top: 1px solid lightgrey;
 `;
 
-const CardList = connectCardList(({cards, linkedCards, addCard}) => linkedCards.length
-	? <>
+const CardList = connectCardList(({cards, linkedCards, selectedCard}) => <>
+	{!!linkedCards.length && <v.Grid>
+		<EditCard prelinked={selectedCard} />
+
+		{linkedCards.map(card => <Card key={card._id} {...card} />)}
+	</v.Grid>}
+	{!!cards.length && <>
+		{!!linkedCards.length && <Split />}
 		<v.Grid>
 			<EditCard />
 
-			{linkedCards.map(card => <Card key={card._id} {...card} />)}
+			{cards.map(card => <Card key={card._id} {...card} />)}
 		</v.Grid>
-		{!!cards.length && <>
-			<Split />
-			<v.Grid>
-				{cards.map(card => <Card key={card._id} {...card} />)}
-			</v.Grid>
-		</>}
-	</>
-	: <v.Grid>
-		<EditCard />
-
-		{cards.map(card => <Card key={card._id} {...card} />)}
-	</v.Grid>);
+	</>}
+</>);
 
 export default CardList;
