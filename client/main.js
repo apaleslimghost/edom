@@ -300,7 +300,7 @@ const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards
 	</List>
 </Box>);
 
-const editCardAction = withTracker(({_id, setEditing}) => ({
+const editCardAction = withTracker(({_id, title, setEditing}) => ({
 	onSubmit(ev) {
 		const data = getFormData(ev);
 
@@ -313,14 +313,29 @@ const editCardAction = withTracker(({_id, setEditing}) => ({
 
 		setEditing && setEditing(false);
 	},
+
+	deleteCard() {
+		if(confirm(`Delete "${title}"?`)) {
+			Cards.remove(_id);
+			Cards.find({related: _id}).forEach(card => {
+				Cards.update(card._id, {
+					$pull: {related: _id},
+				});
+			});
+		}
+	}
 }));
 
-const EditCard = editCardAction(({title, text, onSubmit, setEditing}) => <Box>
+const EditCard = editCardAction(({_id, deleteCard, title, text, onSubmit, setEditing}) => <Box>
 	<form onSubmit={onSubmit}>
 		<Label>Title <Input required name='title' defaultValue={title} /></Label>
 		<Label><Textarea name='text' defaultValue={text} rows={5} /></Label>
-		<Button>Save</Button>
-		{setEditing && <Right><Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</Button></Right>}
+
+		{_id && <Right><Button color='crimson' onClick={prevent(deleteCard)}>Delete</Button></Right>}
+		<List>
+			<Button>Save</Button>
+			{setEditing && <Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</Button>}
+		</List>
 	</form>
 </Box>);
 
