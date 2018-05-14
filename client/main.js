@@ -38,6 +38,7 @@ const distances = (graph, start, visited = {[start]: 0}, depth = 1) => {
 	const next = graph[start];
 	const nextDepth = depth + 1;
 
+
 	next &&
 		next
 			.filter(node => {
@@ -95,7 +96,7 @@ const Box = styled.div`
 	padding: 1em;
 `;
 
-const Tag = styled.span`
+const Tag = styled.a`
 	background: ${({color}) => color || 'dodgerblue'};
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
 	font-size: 0.8em;
@@ -142,18 +143,63 @@ const Right = styled.span`
 	float: right;
 `;
 
-const withRelated = withTracker(({related}) => ({
+const withRelated = withTracker(({_id, related}) => ({
 	relatedCards: Cards.find({
 		_id: {$in: related || []}
 	}).fetch(),
+
+	setSelected() {
+		Session.set('selectedCard', _id);
+	},
+
+	removeRelated(related) {
+		Cards.update(_id, {
+			$pull: {related}
+		})
+	}
 }));
 
-const ShowCard = withRelated(({title, text = '', relatedCards, setEditing}) => <Box>
+const withAddRelated = withTracker(({card, exclude}) => ({
+	cards: Cards.find({
+		_id: {$nin: exclude}
+	}).fetch(),
+
+	addRelated(ev) {
+		const related = ev.target.selectedOptions[0].value;
+		Cards.update(card, {
+			$addToSet: {related},
+		});
+
+		ev.target.selectedIndex = 0;
+	}
+}));
+
+const List = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+
+	& > * {
+		margin-right: .25em;
+	}
+`
+
+const AddRelated = withAddRelated(({cards = [], addRelated}) => cards.length ? <select defaultValue='' onChange={addRelated}>
+	<option value='' disabled>Add relationship...</option>
+	{cards.map(
+		card => <option value={card._id} key={card._id}>{card.title}</option>
+	)}
+</select> : null);
+
+const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, setEditing, setSelected, removeRelated}) => <Box>
 	<Right><Button onClick={() => setEditing(true)}>✎</Button></Right>
-	<Title>{title}</Title>
+	<Title><a href={`#${_id}`} onClick={setSelected}>{title}</a></Title>
 	<Markdown source={text} />
 
-	{relatedCards.map(card => <Tag key={card._id}>{card.title}</Tag>)}
+	<List>
+		{relatedCards.map(card => <Tag key={card._id} onClick={() => removeRelated(card._id)}>{card.title}</Tag>)}
+		<AddRelated card={_id} exclude={related.concat(_id)} />
+	</List>
 </Box>);
 
 const editCardAction = withTracker(({_id, setEditing}) => ({
@@ -194,5 +240,9 @@ const CardList = withCardListActions(({cards, addCard}) => <Grid>
 </Grid>);
 
 Meteor.startup(() => {
+	if(location.hash) {
+		Session.set('selectedCard', location.hash.slice(1));
+	}
+
 	render(<CardList />, document.getElementById('root'));
 });
