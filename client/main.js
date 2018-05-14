@@ -8,12 +8,16 @@ import CardList from './card-list';
 
 injectGlobal`
 	body {
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: "American Typewriter", "Courier New", monospace;
 		margin: 0;
 	}
 
 	* {
 		box-sizing: border-box;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: normal;
 	}
 `;
 
