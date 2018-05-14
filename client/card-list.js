@@ -70,6 +70,7 @@ const connectCardList = withTracker(() => {
 const Split = styled.hr`
 	border: 0 none;
 	border-top: 1px solid lightgrey;
+	margin: 3em 0;
 `;
 
 const CardList = connectCardList(({cards, linkedCards, selectedCard}) => <>

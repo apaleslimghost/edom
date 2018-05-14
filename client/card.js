@@ -9,7 +9,7 @@ import prevent from './prevents-default';
 import getFormData from './form-data';
 import {Cards} from '../shared/collections';
 
-const withRelated = withTracker(({_id, related}) => ({
+const connectCard = withTracker(({_id, related}) => ({
 	relatedCards: Cards.find({
 		_id: {$in: related || []}
 	}).fetch(),
@@ -43,7 +43,7 @@ const withRelated = withTracker(({_id, related}) => ({
 		Cards.update(_id, {
 			$pull: {tags: tag}
 		});
-	}
+	},
 }));
 
 const connectAddRelated = withTracker(({card, exclude}) => ({
@@ -116,7 +116,20 @@ const TitleLink = styled.a`
 	}
 `
 
-const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, tags = [], setEditing, setSelected, removeRelated, addTag, removeTag}) => <Vertical>
+const ShowCard = connectCard(({
+	_id,
+	title,
+	text = '',
+	related = [],
+	relatedCards,
+	tags = [],
+	setEditing,
+	setSelected,
+	removeRelated,
+	addTag,
+	removeTag,
+	isSelected
+}) => <Vertical>
 	<Floating><v.Button onClick={() => setEditing(true)}>✎</v.Button></Floating>
 	<v.Title><TitleLink href={`#${_id}`} onClick={setSelected}>{title}</TitleLink></v.Title>
 	<Markdown source={text} />
