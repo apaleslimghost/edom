@@ -132,7 +132,9 @@ const ShowCard = connectCard(({
 	isSelected
 }) => <Vertical>
 	<Floating><v.Button onClick={() => setEditing(true)}>✎</v.Button></Floating>
-	<v.Title><TitleLink href={`#${_id}`} onClick={setSelected}>{title}</TitleLink></v.Title>
+	<v.Title>
+		<TitleLink href={`#${isSelected ? '' : _id}`} onClick={setSelected}>{title}</TitleLink>
+	</v.Title>
 	<Markdown source={text} />
 
 	<Bottom>
