@@ -20,8 +20,12 @@ const withRelated = withTracker(({_id, related}) => ({
 
 	removeRelated(related) {
 		Cards.update(_id, {
-			$pull: {related}
-		})
+			$pull: {related},
+		});
+
+		Cards.update(related, {
+			$pull: {related: _id},
+		});
 	},
 
 	addTag(ev) {
@@ -52,6 +56,10 @@ const connectAddRelated = withTracker(({card, exclude}) => ({
 
 		Cards.update(card, {
 			$addToSet: {related},
+		});
+
+		Cards.update(related, {
+			$addToSet: {related: card},
 		});
 
 		ev.target.selectedIndex = 0;
@@ -104,7 +112,6 @@ const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards
 		</v.List>
 	</Bottom>
 </Vertical>);
-
 
 const editCardAction = withTracker(({_id, title, setEditing}) => ({
 	onSubmit(ev) {
