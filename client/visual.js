@@ -109,7 +109,7 @@ export const Title = styled.h2`
 `;
 
 export const Right = styled.span`
-	float: right;
+	margin-left: auto;
 `;
 
 export const List = styled.div`
