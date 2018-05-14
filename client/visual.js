@@ -112,11 +112,28 @@ export const Right = styled.span`
 export const List = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
+	align-items: center;
 	margin-bottom: .25em;
 
 	& > * {
 		margin-bottom: .25em;
 		margin-right: .25em;
 	}
+
+	& > & {
+		margin-right: 0;
+	}
 `;
+
+export const Sep = styled.span`
+	display: inline-block;
+	vertical-align: middle;
+	height: 2em;
+	width: 1px;
+	background: lightgrey;
+	margin: -.25em .25em 0;
+
+	${List} > & {
+		margin-right: .5em;
+	}
+`

@@ -42,7 +42,7 @@ const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, rem
 		<v.List>
 			{filterTags.map(tag => <v.ColoredTag key={tag} onClick={() => removeFromFilter(tag)}>{tag}</v.ColoredTag>)}
 		</v.List>
-		{!!filterTags.length && !!unfilteredTags.length && <span>│</span>}
+		{!!filterTags.length && !!unfilteredTags.length && <v.Sep />}
 		<v.List>
 			{unfilteredTags.map(tag => <v.ColoredTag onClick={() => addToFilter(tag)} key={tag}>{tag}</v.ColoredTag>)}
 		</v.List>

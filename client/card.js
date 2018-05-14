@@ -2,6 +2,7 @@ import React from 'react';
 import Markdown from 'react-markdown';
 import {withTracker} from 'meteor/react-meteor-data';
 import {compose, withState, branch, renderComponent} from 'recompact';
+import styled from 'styled-components';
 
 import * as v from './visual';
 import prevent from './prevents-default';
@@ -64,23 +65,41 @@ const AddRelated = connectAddRelated(({cards = [], addRelated}) => cards.length 
 	)}
 </v.Select> : null);
 
-const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, tags = [], setEditing, setSelected, removeRelated, addTag, removeTag}) => <v.Box>
-	<v.Right><v.Button onClick={() => setEditing(true)}>✎</v.Button></v.Right>
+const Vertical = v.Box.extend`
+	position: relative;
+	display: flex;
+	flex-direction: column;
+`;
+
+const Bottom = styled.div`
+	margin-top: auto;
+	padding-top: 1em;
+	border-top: 1px solid lightgrey;
+`;
+
+const Floating = styled.div`
+	position: absolute;
+	top: 1em;
+	right: 1em;
+`
+
+const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, tags = [], setEditing, setSelected, removeRelated, addTag, removeTag}) => <Vertical>
+	<Floating><v.Button onClick={() => setEditing(true)}>✎</v.Button></Floating>
 	<v.Title><a href={`#${_id}`} onClick={setSelected}>{title}</a></v.Title>
 	<Markdown source={text} />
 
-	<v.List>
-		{tags.map(tag => <v.ColoredTag key={tag} onClick={() => removeTag(tag)}>{tag}</v.ColoredTag>)}
-		<form onSubmit={addTag}>
-			<v.Input placeholder='Tag...' size={7} name='tag' list='tags-list' small />
-		</form>
-	</v.List>
-
-	<v.List>
-		{relatedCards.map(card => <v.Tag key={card._id} onClick={() => removeRelated(card._id)}>{card.title}</v.Tag>)}
-		<AddRelated card={_id} exclude={related.concat(_id)} />
-	</v.List>
-</v.Box>);
+	<Bottom>
+		<v.List>
+			{tags.map(tag => <v.ColoredTag key={tag} onClick={() => removeTag(tag)}>{tag}</v.ColoredTag>)}
+			<form onSubmit={addTag}>
+				<v.Input placeholder='Tag...' size={7} name='tag' list='tags-list' small />
+			</form>
+			<v.Sep />
+			{relatedCards.map(card => <v.Tag key={card._id} onClick={() => removeRelated(card._id)}>{card.title}</v.Tag>)}
+			<AddRelated card={_id} exclude={related.concat(_id)} />
+		</v.List>
+	</Bottom>
+</Vertical>);
 
 
 const editCardAction = withTracker(({_id, title, setEditing}) => ({
@@ -116,7 +135,7 @@ export const EditCard = editCardAction(({_id, deleteCard, title, text, onSubmit,
 
 		{_id && <v.Right><v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button></v.Right>}
 		<v.List>
-			<v.Button>Save</v.Button>
+			<v.Button color={!_id ? 'mediumseagreen' : undefined}>{_id ? 'Save' : 'Add'}</v.Button>
 			{setEditing && <v.Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</v.Button>}
 		</v.List>
 	</form>
