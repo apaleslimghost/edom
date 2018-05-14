@@ -107,11 +107,6 @@ export const Button = Tag.extend`
 export const Title = styled.h2`
 	margin-top: 0;
 `;
-
-export const Right = styled.span`
-	margin-left: auto;
-`;
-
 export const List = styled.div`
 	display: flex;
 	flex-wrap: wrap;
@@ -125,8 +120,21 @@ export const List = styled.div`
 
 	& > & {
 		margin-right: 0;
+		margin-bottom: 0;
 	}
 `;
+
+export const Right = List.extend`
+	margin-left: auto;
+	margin-right: 0;
+	margin-bottom: 0;
+
+	& > * {
+		margin-left: .25em;
+		margin-right: 0;
+	}
+`;
+
 
 export const Sep = styled.span`
 	display: inline-block;

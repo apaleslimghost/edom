@@ -161,9 +161,12 @@ export const EditCard = editCardAction(({_id, deleteCard, title, text, onSubmit,
 		<FlexLabel><v.Textarea name='text' defaultValue={text} rows={5} /></FlexLabel>
 
 		<v.List>
-			<v.Button color={!_id ? 'mediumseagreen' : undefined}>{_id ? 'Save' : 'Add'}</v.Button>
-			{setEditing && <v.Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</v.Button>}
-			{_id && <v.Right><v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button></v.Right>}
+			{_id && <v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button>}
+
+			<v.Right>
+				{setEditing && <v.Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</v.Button>}
+				<v.Button color={!_id ? 'mediumseagreen' : undefined}>{_id ? 'Save' : 'Add'}</v.Button>
+			</v.Right>
 		</v.List>
 	</FlexForm>
 </v.Box>);
