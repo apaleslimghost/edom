@@ -38,7 +38,6 @@ const distances = (graph, start, visited = {[start]: 0}, depth = 1) => {
 	const next = graph[start];
 	const nextDepth = depth + 1;
 
-
 	next &&
 		next
 			.filter(node => {
@@ -59,20 +58,23 @@ const buildGraph = cards =>
 		{}
 	);
 
-
 const withCardListActions = withTracker(() => {
 	const selectedCard = Session.get('selectedCard');
 	const cards = Cards.find().fetch();
+	const filterTags = new Set(Session.get('filterTags') || []);
+	const emptyFilter = filterTags.size === 0;
 
-	if (selectedCard) {
+	if(selectedCard) {
 		const graph = buildGraph(cards);
 		const d = distances(graph, selectedCard);
 
-		cards.forEach(card => (card.sortedIndex = d[card._id]));
+		cards.forEach(card => {
+			card.sortedIndex = d[card._id]
+		});
 	}
 
 	return {
-		cards: orderBy(cards, ['sortedIndex', 'text.length', 'title'], ['asc', 'desc', 'asc']),
+		cards: orderBy(cards, ['sortedIndex', 'text.length', 'title'], ['asc', 'desc', 'asc']).filter(c => emptyFilter || c.tags.some(t => filterTags.has(t))),
 		addCard(card) {
 			Cards.insert(card);
 		}
@@ -215,14 +217,36 @@ const withRelated = withTracker(({_id, related}) => ({
 	}
 }));
 
-const withAllTags = withTracker(() => ({
-	allTags: Array.from(
+const withAllTags = withTracker(() => {
+	const filterTags = Session.get('filterTags') || [];
+	const filterTagsSet = new Set(filterTags);
+	const allTags = Array.from(
 		Cards.find().fetch().reduce((allTags, {tags = []}) => {
 			tags.forEach(tag => allTags.add(tag));
 			return allTags;
 		}, new Set)
-	),
-}));
+	);
+
+	return {
+		filterTags,
+		allTags,
+		unfilteredTags: allTags.filter(t => !filterTagsSet.has(t)),
+
+		addToFilter(tag) {
+			Session.set(
+				'filterTags',
+				 (Session.get('filterTags') || []).concat(tag),
+			);
+		},
+
+		removeFromFilter(tag) {
+			Session.set(
+				'filterTags',
+				(Session.get('filterTags') || []).filter(t => t !== tag)
+			);
+		},
+	}
+});
 
 const withAddRelated = withTracker(({card, exclude}) => ({
 	cards: Cards.find({
@@ -283,6 +307,7 @@ const editCardAction = withTracker(({_id, setEditing}) => ({
 		if(_id) {
 			Cards.update(_id, {$set: data});
 		} else {
+			data.tags = Session.get('filterTags') || [];
 			Cards.insert(data);
 		}
 
@@ -313,10 +338,17 @@ const CardList = withCardListActions(({cards, addCard}) => <Grid>
 	<EditCard />
 </Grid>);
 
-const AllTags = withAllTags(({allTags}) => <Pad>
-	<List>
-		{allTags.map(tag => <ColoredTag key={tag}>{tag}</ColoredTag>)}
-	</List>
+const AllTags = withAllTags(({filterTags, unfilteredTags, allTags, addToFilter, removeFromFilter}) => <Pad>
+	{(!!filterTags.length || !!unfilteredTags.length) && <List>
+		{!!filterTags.length && <strong>Filter:</strong>}
+		<List>
+			{filterTags.map(tag => <ColoredTag key={tag} onClick={() => removeFromFilter(tag)}>{tag}</ColoredTag>)}
+		</List>
+		{!!filterTags.length && !!unfilteredTags.length && <span>│</span>}
+		<List>
+			{unfilteredTags.map(tag => <ColoredTag onClick={() => addToFilter(tag)} key={tag}>{tag}</ColoredTag>)}
+		</List>
+	</List>}
 
 	<datalist id='tags-list'>
 		{allTags.map(tag => <option key={tag} value={tag} />)}
