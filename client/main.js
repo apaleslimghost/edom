@@ -7,15 +7,20 @@ import orderBy from 'lodash.orderby';
 import formJson from '@quarterto/form-json';
 import {Cards} from '../shared/collections';
 import Markdown from 'react-markdown';
+import {compose, withState, branch, renderComponent} from 'recompact';
 
-const getFormData = ev => {
+const prevent = fn => ev => {
 	ev.preventDefault();
+	return fn(ev);
+};
+
+const getFormData = prevent(ev => {
 	try {
 		return formJson(ev.target);
 	} finally {
 		ev.target.reset();
 	}
-};
+});
 
 injectGlobal`
 	body {
@@ -91,7 +96,7 @@ const Box = styled.div`
 `;
 
 const Tag = styled.span`
-	background: dodgerblue;
+	background: ${({color}) => color || 'dodgerblue'};
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
 	font-size: 0.8em;
 	color: white;
@@ -133,43 +138,59 @@ const Title = styled.h2`
 	margin-top: 0;
 `;
 
+const Right = styled.span`
+	float: right;
+`;
+
 const withRelated = withTracker(({related}) => ({
 	relatedCards: Cards.find({
 		_id: {$in: related || []}
 	}).fetch(),
 }));
 
-const Card = withRelated(({title, text = '', relatedCards}) => <Box>
+const ShowCard = withRelated(({title, text = '', relatedCards, setEditing}) => <Box>
+	<Right><Button onClick={() => setEditing(true)}>✎</Button></Right>
 	<Title>{title}</Title>
 	<Markdown source={text} />
-
 
 	{relatedCards.map(card => <Tag key={card._id}>{card.title}</Tag>)}
 </Box>);
 
-
-const EditCard = ({title, text, onSubmit}) => <Box>
-	<form onSubmit={onSubmit}>
-		<Label>Title <Input name='title' defaultValue={title} /></Label>
-		<Label><Textarea name='text' defaultValue={text} rows={5} /></Label>
-		<Button>Save</Button>
-	</form>
-</Box>;
-
-const withInsertCard = withTracker(() => ({
+const editCardAction = withTracker(({_id, setEditing}) => ({
 	onSubmit(ev) {
 		const data = getFormData(ev);
-		console.log(data);
-		Cards.insert(data);
+
+		if(_id) {
+			Cards.update(_id, {$set: data});
+		} else {
+			Cards.insert(data);
+		}
+
+		setEditing && setEditing(false);
 	},
 }));
 
-const AddCard = withInsertCard(EditCard);
+const EditCard = editCardAction(({title, text, onSubmit, setEditing}) => <Box>
+	<form onSubmit={onSubmit}>
+		<Label>Title <Input required name='title' defaultValue={title} /></Label>
+		<Label><Textarea name='text' defaultValue={text} rows={5} /></Label>
+		<Button>Save</Button>
+		{setEditing && <Right><Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</Button></Right>}
+	</form>
+</Box>);
+
+const Card = compose(
+	withState('editing', 'setEditing', false),
+	branch(
+		({editing}) => editing,
+		renderComponent(EditCard)
+	)
+)(ShowCard);
 
 const CardList = withCardListActions(({cards, addCard}) => <Grid>
 	{cards.map(card => <Card key={card._id} {...card} />)}
 
-	<AddCard />
+	<EditCard />
 </Grid>);
 
 Meteor.startup(() => {
