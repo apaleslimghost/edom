@@ -13,7 +13,7 @@ const connectTags = withTracker(() => {
 			tags.forEach(tag => allTags.add(tag));
 			return allTags;
 		}, new Set)
-	);
+	).sort((a, b) => a.localeCompare(b, 'en', {sensitivity: 'base'}));
 
 	return {
 		filterTags,
