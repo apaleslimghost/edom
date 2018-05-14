@@ -209,7 +209,6 @@ const withRelated = withTracker(({_id, related}) => ({
 	},
 
 	removeTag(tag) {
-		console.log(tag);
 		Cards.update(_id, {
 			$pull: {tags: tag}
 		});
