@@ -97,11 +97,28 @@ const Floating = styled.div`
 	position: absolute;
 	top: 1em;
 	right: 1em;
+`;
+
+const TitleLink = styled.a`
+	&, &:link, &:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&:hover {
+		color: dodgerblue;
+		text-decoration: underline;
+		text-decoration-skip: ink;
+	}
+
+	&:active {
+		color: cornflowerblue;
+	}
 `
 
 const ShowCard = withRelated(({_id, title, text = '', related = [], relatedCards, tags = [], setEditing, setSelected, removeRelated, addTag, removeTag}) => <Vertical>
 	<Floating><v.Button onClick={() => setEditing(true)}>✎</v.Button></Floating>
-	<v.Title><a href={`#${_id}`} onClick={setSelected}>{title}</a></v.Title>
+	<v.Title><TitleLink href={`#${_id}`} onClick={setSelected}>{title}</TitleLink></v.Title>
 	<Markdown source={text} />
 
 	<Bottom>
