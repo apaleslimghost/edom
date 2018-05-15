@@ -21,7 +21,7 @@ const connectCardSearch = withTracker(({exclude = [], onSelect}) => {
 
 		onChange(ev) {
 			const datalist = document.getElementById(id);
-			const option = Array.from(datalist.options).find(
+			const option = Array.from(datalist.children).find(
 				o => o.dataset.title + '\0' === ev.target.value,
 			);
 
