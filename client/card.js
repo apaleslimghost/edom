@@ -228,12 +228,11 @@ export const EditCard = editCardAction(({
 				<input type='checkbox' name='_link' defaultChecked />
 			</v.Label>}
 
-			{!!pretag.length && <v.Label>
+			{!_id && !!pretag.length && <v.Label>
 				<span>Tag with</span>
 				{pretag.map(tag => <v.ColoredTag key={tag}>{tag}</v.ColoredTag>)}
 				<input type='checkbox' name='_tag' defaultChecked />
 			</v.Label>}
-
 
 			{_id && <v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button>}
 
