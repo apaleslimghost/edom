@@ -9,6 +9,7 @@ import prevent from './prevents-default';
 import getFormData from './form-data';
 import {Cards} from '../shared/collections';
 import slug from './slug';
+import CardSelect from './select-card';
 
 const connectCard = withTracker(({_id, related}) => ({
 	relatedCards: Cards.find({
@@ -49,18 +50,8 @@ const connectCard = withTracker(({_id, related}) => ({
 	isSelected: Session.get('selectedCard') === _id,
 }));
 
-const connectAddRelated = withTracker(({card, exclude}) => ({
-	cards: Cards.find({
-		_id: {$nin: exclude}
-	}, {
-		sort: {
-			title: 1
-		}
-	}).fetch(),
-
-	addRelated(ev) {
-		const related = ev.target.selectedOptions[0].value;
-
+const connectAddRelated = withTracker(({card}) => ({
+	addRelated(related) {
 		Cards.update(card, {
 			$addToSet: {related},
 		});
@@ -68,21 +59,13 @@ const connectAddRelated = withTracker(({card, exclude}) => ({
 		Cards.update(related, {
 			$addToSet: {related: card},
 		});
-
-		ev.target.selectedIndex = 0;
 	}
 }));
 
-const NarrowSelect = v.Select.extend`
-	max-width: 7em;
-`;
 
-const AddRelated = connectAddRelated(({cards = [], addRelated}) => cards.length ? <NarrowSelect small defaultValue='' onChange={addRelated}>
-	<option value='' disabled>Link...</option>
-	{cards.map(
-		card => <option value={card._id} key={card._id}>{card.title}</option>
-	)}
-</NarrowSelect> : null);
+const AddRelated = connectAddRelated(({addRelated, exclude}) =>
+	<CardSelect size={7} onSelect={addRelated} exclude={exclude} placeholder='Link...' small />
+);
 
 const Vertical = v.Box.extend`
 	position: relative;
