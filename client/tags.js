@@ -36,7 +36,7 @@ const connectTags = withTracker(() => {
 	}
 });
 
-const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, removeFromFilter}) => <v.Pad>
+const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, removeFromFilter}) => <>
 	{(!!filterTags.length || !!unfilteredTags.length) && <v.List>
 		{!!filterTags.length && <strong>Filter:</strong>}
 		<v.List>
@@ -51,6 +51,6 @@ const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, rem
 	<datalist id='tags-list'>
 		{allTags.map(tag => <option key={tag} value={tag} />)}
 	</datalist>
-</v.Pad>);
+</>);
 
 export default Tags;

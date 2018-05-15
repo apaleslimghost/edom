@@ -90,8 +90,8 @@ export const Label = styled.label`
 `;
 
 export const Button = Tag.extend`
+	font-size: ${({small}) => small ? '0.8em' : '1em'};
 	box-shadow: inset 0 -.5px 0 .5px rgba(0, 0, 0, 0.5);
-	font-size: 1em;
 	padding: .25em .5em;
 
 	&:hover {

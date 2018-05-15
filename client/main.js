@@ -5,6 +5,8 @@ import {injectGlobal} from 'styled-components';
 
 import Tags from './tags';
 import CardList from './card-list';
+import SortInfo from './sort-info';
+import * as v from './visual';
 
 injectGlobal`
 	body {
@@ -22,7 +24,14 @@ injectGlobal`
 `;
 
 const App = () => <main>
-	<Tags />
+	<v.Pad>
+		<v.List>
+			<Tags />
+			<v.Right>
+				<SortInfo />
+			</v.Right>
+		</v.List>
+	</v.Pad>
 	<CardList />
 </main>;
 
