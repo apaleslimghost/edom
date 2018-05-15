@@ -153,6 +153,7 @@ const editCardAction = withTracker(({_id, title, setEditing, prelinked}) => ({
 
 			const addPrelink = prelinked && data._link;
 
+			data.related = [];
 			if(addPrelink) {
 				data.related = prelinked ? [prelinked] : [];
 			}
