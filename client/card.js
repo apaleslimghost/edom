@@ -45,6 +45,8 @@ const connectCard = withTracker(({_id, related}) => ({
 			$pull: {tags: tag}
 		});
 	},
+
+	isSelected: Session.get('selectedCard') === _id,
 }));
 
 const connectAddRelated = withTracker(({card, exclude}) => ({
@@ -132,7 +134,7 @@ const ShowCard = connectCard(({
 	isSelected
 }) => <Vertical>
 	<Floating><v.Button onClick={() => setEditing(true)}>✎</v.Button></Floating>
-	<v.Title>
+	<v.Title bold={isSelected}>
 		<TitleLink href={`#${isSelected ? '' : _id}`} onClick={setSelected}>{title}</TitleLink>
 	</v.Title>
 	<Markdown source={text} />

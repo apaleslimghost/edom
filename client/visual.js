@@ -107,7 +107,9 @@ export const Button = Tag.extend`
 
 export const Title = styled.h2`
 	margin-top: 0;
+	font-weight: ${({bold}) => bold ? 'bold' : 'normal'};
 `;
+
 export const List = styled.div`
 	display: flex;
 	flex-wrap: wrap;
