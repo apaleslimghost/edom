@@ -8,18 +8,18 @@ const box = css`
 `;
 
 export const Pad = styled.div`
-	margin: 1em;
+	margin: 1rem;
 `;
 
 export const Grid = Pad.extend`
 	display: grid;
-	grid-gap: 1em;
-	grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+	grid-gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
 `;
 
 export const Box = styled.div`
 	${box}
-	padding: 1em;
+	padding: 1rem;
 `;
 
 export const Tag = styled.button`
@@ -28,10 +28,10 @@ export const Tag = styled.button`
 	border: 0 none;
 	background: ${({color}) => color || 'dodgerblue'};
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
-	font-size: 0.8em;
+	font-size: 0.8rem;
 	color: white;
 	border-radius: 2px;
-	padding: .25em;
+	padding: .25rem;
 `;
 
 export const niceColors = [
@@ -55,8 +55,8 @@ export const Input = styled.input`
 	${box}
 	font: inherit;
 	font-weight: normal;
-	font-size: ${({small}) => small ? '0.8em' : 'inherit'};
-	padding: .25em;
+	font-size: ${({small}) => small ? '0.8rem' : 'inherit'};
+	padding: .25rem;
 `;
 
 export const Textarea = Input.withComponent('textarea').extend`
@@ -67,10 +67,10 @@ export const Textarea = Input.withComponent('textarea').extend`
 export const Select = Input.withComponent('select').extend`
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' width='10' height='5'%3E%3Cpath d='M 5,5 0,0 10,0 Z'/%3E%3C/svg%3E");
 	background-repeat: no-repeat;
-	background-size: 0.5em 0.25em;
-	background-position: right 0.5em center;
+	background-size: 0.5rem 0.25rem;
+	background-position: right 0.5rem center;
 	appearance: none;
-	padding-right: 1.5em;
+	padding-right: 1.5rem;
 
 	&:invalid {
 		color: rgba(0, 0, 0, 0.6);
@@ -78,9 +78,9 @@ export const Select = Input.withComponent('select').extend`
 `;
 
 export const Button = Tag.extend`
-	font-size: ${({small}) => small ? '0.8em' : '1em'};
+	font-size: ${({small}) => small ? '0.8rem' : '1rem'};
 	box-shadow: inset 0 -.5px 0 .5px rgba(0, 0, 0, 0.5);
-	padding: .25em .5em;
+	padding: .25rem .5rem;
 
 	&:hover {
 		box-shadow: inset 0 -1px 0 .5px rgba(0, 0, 0, 0.5);
@@ -102,11 +102,11 @@ export const List = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	margin-bottom: .25em;
+	margin-bottom: .25rem;
 
 	& > * {
-		margin-bottom: .25em;
-		margin-right: .25em;
+		margin-bottom: .25rem;
+		margin-right: .25rem;
 	}
 
 	& > & {
@@ -118,11 +118,11 @@ export const List = styled.div`
 export const Label = List.withComponent('label').extend`
 	display: flex;
 	align-items: center;
-	margin-bottom: .5em;
+	margin-bottom: .5rem;
 
 	${Input} {
 		flex: 1;
-		margin-left: .5em;
+		margin-left: .5rem;
 	}
 `;
 
@@ -133,7 +133,7 @@ export const Right = List.extend`
 	margin-bottom: 0;
 
 	& > * {
-		margin-left: .25em;
+		margin-left: .25rem;
 		margin-right: 0;
 	}
 `;
@@ -142,12 +142,12 @@ export const Right = List.extend`
 export const Sep = styled.span`
 	display: inline-block;
 	vertical-align: middle;
-	height: 2em;
+	height: 2rem;
 	width: 1px;
 	background: lightgrey;
-	margin: -.25em .25em 0;
+	margin: -.25rem .25rem 0;
 
 	${List} > & {
-		margin-right: .5em;
+		margin-right: .5rem;
 	}
 `

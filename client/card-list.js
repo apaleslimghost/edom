@@ -55,7 +55,7 @@ const connectCardList = withTracker(() => {
 		['sortedIndex', 'related.length', 'text.length', 'title'],
 		['asc',         'desc',           'desc',        'asc']
 	).filter(
-		c => emptyFilter || c.tags.some(
+		c => emptyFilter || c._id === selectedCard || c.tags.some(
 			t => filterTags.has(t)
 		)
 	);

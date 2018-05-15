@@ -33,15 +33,22 @@ const connectTags = withTracker(() => {
 				(Session.get('filterTags') || []).filter(t => t !== tag)
 			);
 		},
+
+		clearFilter() {
+			Session.set('filterTags', []);
+		}
 	}
 });
 
-const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, removeFromFilter}) => <>
+const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, removeFromFilter, clearFilter}) => <>
 	{(!!filterTags.length || !!unfilteredTags.length) && <v.List>
-		{!!filterTags.length && <strong>Filter:</strong>}
-		<v.List>
-			{filterTags.map(tag => <v.ColoredTag key={tag} onClick={() => removeFromFilter(tag)}>{tag}</v.ColoredTag>)}
-		</v.List>
+		{!!filterTags.length && <>
+			<strong>Filter:</strong>
+			<v.List>
+				{filterTags.map(tag => <v.ColoredTag key={tag} onClick={() => removeFromFilter(tag)}>{tag}</v.ColoredTag>)}
+				<v.Button onClick={clearFilter} color='grey' small>×</v.Button>
+			</v.List>
+		</>}
 		{!!filterTags.length && !!unfilteredTags.length && <v.Sep />}
 		<v.List>
 			{unfilteredTags.map(tag => <v.ColoredTag onClick={() => addToFilter(tag)} key={tag}>{tag}</v.ColoredTag>)}
