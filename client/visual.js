@@ -127,8 +127,12 @@ export const Label = List.withComponent('label').extend`
 	align-items: center;
 	margin-bottom: .5rem;
 
-	${Input} {
+	${Input}, ${Textarea} {
 		flex: 1;
+		margin: 0;
+	}
+
+	${Input}:not(::first-child) {
 		margin-left: .5rem;
 	}
 `;

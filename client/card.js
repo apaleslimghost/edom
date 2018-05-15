@@ -218,12 +218,12 @@ export const EditCard = editCardAction(({
 	pretag,
 }) => <v.Box>
 	<FlexForm onSubmit={onSubmit}>
-		<v.Label>Title <v.Input required name='title' defaultValue={title} /></v.Label>
-		<FlexLabel><v.Textarea name='text' defaultValue={text} rows={5} /></FlexLabel>
+		<v.Label><v.Input required name='title' defaultValue={title} large placeholder='Title' /></v.Label>
+		<FlexLabel><v.Textarea name='text' defaultValue={text} rows={5} placeholder='Description' /></FlexLabel>
 
 		<v.List>
 			{prelinkedCard && <v.Label>
-				<span>Linked to</span>
+				<span>Link to</span>
 				<v.Tag>{prelinkedCard.title}</v.Tag>
 				<input type='checkbox' name='_link' defaultChecked />
 			</v.Label>}
