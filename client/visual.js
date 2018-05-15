@@ -22,10 +22,10 @@ export const Box = styled.div`
 	padding: 1rem;
 `;
 
-export const Tag = styled.button`
+const _Tag = styled.span`
+	display: inline-block;
 	font: inherit;
 	font-weight: normal;
-	cursor: pointer;
 	border: 0 none;
 	background: ${({color}) => color || 'dodgerblue'};
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
@@ -34,6 +34,12 @@ export const Tag = styled.button`
 	border-radius: 2px;
 	padding: .25rem;
 `;
+
+const _ButtonTag = _Tag.withComponent('button').extend`
+	cursor: pointer;
+`;
+
+export const Tag = props => props.onClick ? <_ButtonTag {...props} /> : <_Tag {...props} />
 
 export const niceColors = [
 	'darkcyan',
@@ -78,7 +84,7 @@ export const Select = Input.withComponent('select').extend`
 	}
 `;
 
-export const Button = Tag.extend`
+export const Button = _ButtonTag.extend`
 	font-size: ${({small}) => small ? '0.8rem' : '1rem'};
 	box-shadow: inset 0 -.5px 0 .5px rgba(0, 0, 0, 0.5);
 	padding: .25rem .5rem;
