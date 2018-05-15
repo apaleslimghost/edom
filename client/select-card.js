@@ -5,7 +5,7 @@ import shortId from '@quarterto/short-id';
 import * as v from './visual';
 import {Cards} from '../shared/collections';
 
-const connectCardSearch = withTracker(({exclude, onSelect}) => {
+const connectCardSearch = withTracker(({exclude = [], onSelect}) => {
 	const id = shortId();
 
 	return {

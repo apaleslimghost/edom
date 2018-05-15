@@ -6,6 +6,7 @@ import {injectGlobal} from 'styled-components';
 import Tags from './tags';
 import CardList from './card-list';
 import SortInfo from './sort-info';
+import CardSelect from './select-card';
 import * as v from './visual';
 
 injectGlobal`
@@ -26,6 +27,11 @@ injectGlobal`
 const App = () => <main>
 	<v.Pad>
 		<v.List>
+			<CardSelect
+				placeholder='Search...'
+				type='search'
+				onSelect={card => Session.set('selectedCard', card)}
+			/>
 			<Tags />
 			<v.Right>
 				<SortInfo />
