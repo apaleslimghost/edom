@@ -77,18 +77,6 @@ export const Select = Input.withComponent('select').extend`
 	}
 `;
 
-export const Label = styled.label`
-	display: flex;
-	align-items: center;
-	font-weight: bold;
-	margin-bottom: .5em;
-
-	${Input} {
-		flex: 1;
-		margin-left: .5em;
-	}
-`;
-
 export const Button = Tag.extend`
 	font-size: ${({small}) => small ? '0.8em' : '1em'};
 	box-shadow: inset 0 -.5px 0 .5px rgba(0, 0, 0, 0.5);
@@ -126,6 +114,18 @@ export const List = styled.div`
 		margin-bottom: 0;
 	}
 `;
+
+export const Label = List.withComponent('label').extend`
+	display: flex;
+	align-items: center;
+	margin-bottom: .5em;
+
+	${Input} {
+		flex: 1;
+		margin-left: .5em;
+	}
+`;
+
 
 export const Right = List.extend`
 	margin-left: auto;

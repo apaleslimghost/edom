@@ -154,6 +154,7 @@ const ShowCard = connectCard(({
 
 const editCardAction = withTracker(({_id, title, setEditing, prelinked}) => ({
 	prelinkedCard: Cards.findOne(prelinked),
+	pretag: Session.get('filterTags') || [],
 
 	onSubmit(ev) {
 		const data = getFormData(ev);
@@ -161,12 +162,24 @@ const editCardAction = withTracker(({_id, title, setEditing, prelinked}) => ({
 		if(_id) {
 			Cards.update(_id, {$set: data});
 		} else {
-			data.tags = Session.get('filterTags') || [];
-			data.related = prelinked ? [prelinked] : [];
 			data._id = slug(data.title);
 
+			const addPrelink = prelinked && data._link;
+
+			if(addPrelink) {
+				data.related = prelinked ? [prelinked] : [];
+			}
+
+			data.tags = [];
+			if(data._tag) {
+				data.tags = Session.get('filterTags') || [];
+			}
+
+			delete data._link;
+			delete data._tag;
+
 			Cards.insert(data, (err, _id) => {
-				if(prelinked && !err) {
+				if(addPrelink && !err) {
 					Cards.update(prelinked, {
 						$addToSet: {
 							related: _id,
@@ -207,13 +220,34 @@ const FlexLabel = v.Label.extend`
 	}
 `;
 
-export const EditCard = editCardAction(({_id, deleteCard, title, text, onSubmit, setEditing, prelinkedCard}) => <v.Box>
+export const EditCard = editCardAction(({
+	_id,
+	deleteCard,
+	title,
+	text,
+	onSubmit,
+	setEditing,
+	prelinkedCard,
+	pretag,
+}) => <v.Box>
 	<FlexForm onSubmit={onSubmit}>
 		<v.Label>Title <v.Input required name='title' defaultValue={title} /></v.Label>
 		<FlexLabel><v.Textarea name='text' defaultValue={text} rows={5} /></FlexLabel>
 
 		<v.List>
-			{prelinkedCard && <v.Tag>{prelinkedCard.title}</v.Tag>}
+			{prelinkedCard && <v.Label>
+				<span>Linked to</span>
+				<v.Tag>{prelinkedCard.title}</v.Tag>
+				<input type='checkbox' name='_link' defaultChecked />
+			</v.Label>}
+
+			{!!pretag.length && <v.Label>
+				<span>Tag with</span>
+				{pretag.map(tag => <v.ColoredTag key={tag}>{tag}</v.ColoredTag>)}
+				<input type='checkbox' name='_tag' defaultChecked />
+			</v.Label>}
+
+
 			{_id && <v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button>}
 
 			<v.Right>
