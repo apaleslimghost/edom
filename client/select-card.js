@@ -22,7 +22,7 @@ const connectCardSearch = withTracker(({exclude = [], onSelect}) => {
 		onChange(ev) {
 			const datalist = document.getElementById(id);
 			const option = Array.from(datalist.options).find(
-				o => o.dataset.title === ev.target.value,
+				o => o.dataset.title + '\0' === ev.target.value,
 			);
 
 			if(option) {
@@ -36,7 +36,7 @@ const connectCardSearch = withTracker(({exclude = [], onSelect}) => {
 const CardSelect = connectCardSearch(({id, cards, onChange, exclude, onSelect, ...props}) => <>
 	<datalist id={id}>
 		{cards.map(
-			card => <option key={card._id} data-value={card._id} data-title={card.title}>{card.title}</option>
+			card => <option key={card._id} data-value={card._id} data-title={card.title}>{card.title}{'\0'}</option>
 		)}
 	</datalist>
 
