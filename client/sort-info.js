@@ -12,7 +12,13 @@ const connectSortInfo = withTracker(() => ({
 	}
 }));
 
-export default connectSortInfo(({selectedCard, removeSelected}) => selectedCard ? <v.List>
-	<span>Sorting by links to <v.Tag>{selectedCard.title}</v.Tag></span>
-	<v.Button onClick={removeSelected} color='grey' small>×</v.Button>
-</v.List> : null)
+export default connectSortInfo(({selectedCard, removeSelected}) => <v.List>
+	<span>
+		Sorting by
+		<strong> {selectedCard
+			? <>links to <v.Tag>{selectedCard.title}</v.Tag></>
+			: 'most-linked'
+		}</strong>
+	</span>
+	{selectedCard && <v.Button onClick={removeSelected} color='grey' small>×</v.Button>}
+</v.List>);

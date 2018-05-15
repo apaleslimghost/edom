@@ -24,6 +24,7 @@ export const Box = styled.div`
 
 export const Tag = styled.button`
 	font: inherit;
+	font-weight: normal;
 	cursor: pointer;
 	border: 0 none;
 	background: ${({color}) => color || 'dodgerblue'};

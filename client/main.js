@@ -27,14 +27,16 @@ injectGlobal`
 const App = () => <main>
 	<v.Pad>
 		<v.List>
-			<CardSelect
-				placeholder='Search...'
-				type='search'
-				onSelect={card => Session.set('selectedCard', card)}
-			/>
+			<SortInfo />
+			<v.Sep />
 			<Tags />
+
 			<v.Right>
-				<SortInfo />
+				<CardSelect
+					placeholder='Search...'
+					type='search'
+					onSelect={card => Session.set('selectedCard', card)}
+				/>
 			</v.Right>
 		</v.List>
 	</v.Pad>
