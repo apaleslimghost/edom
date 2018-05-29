@@ -100,7 +100,14 @@ const TitleLink = styled.a`
 	&:active {
 		color: cornflowerblue;
 	}
-`
+`;
+
+const MD = styled(Markdown)`
+img {
+	max-width: 100%;
+	height: auto;
+}
+`;
 
 const ShowCard = connectCard(({
 	_id,
@@ -124,7 +131,7 @@ const ShowCard = connectCard(({
 			<TitleLink href={`#${isSelected ? '' : _id}`} onClick={setSelected}>{title}</TitleLink>
 		</v.List>
 	</v.Title>
-	<Markdown source={text} />
+	<MD source={text} />
 
 	<Bottom>
 		<v.List>
