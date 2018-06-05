@@ -35,7 +35,10 @@ const App = () => <main>
 				<CardSelect
 					placeholder='Search...'
 					type='search'
-					onSelect={card => Session.set('selectedCard', card)}
+					onSelect={card => {
+						  location.hash = card;
+						  Session.set('selectedCard', card)
+					}}
 				/>
 			</v.Right>
 		</v.List>
