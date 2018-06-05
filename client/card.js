@@ -11,44 +11,52 @@ import {Cards} from '../shared/collections';
 import slug from './slug';
 import CardSelect from './select-card';
 
-const connectCard = withTracker(({_id, related}) => ({
-	relatedCards: Cards.find({
+const connectCard = withTracker(({_id, title, related}) => {
+	const relatedCards = Cards.find({
 		_id: {$in: related || []}
-	}).fetch(),
+	}).fetch();
 
-	setSelected() {
-		if(Session.get('selectedCard') === _id) {
-			Session.set('selectedCard', null);
-		} else {
-			Session.set('selectedCard', _id);
-		}
-	},
+	return {
+		relatedCards,
 
-	removeRelated(related) {
-		Cards.update(_id, {
-			$pull: {related},
-		});
+		setSelected() {
+			if(Session.get('selectedCard') === _id) {
+				Session.set('selectedCard', null);
+			} else {
+				Session.set('selectedCard', _id);
+			}
+		},
 
-		Cards.update(related, {
-			$pull: {related: _id},
-		});
-	},
+		removeRelated(related) {
+			const relatedCard = relatedCards.find(({_id}) => _id === related);
+			
+			if(config(`Unlink ${title} and ${relatedCard.title}?`)) {
+				Cards.update(_id, {
+					$pull: {related},
+				});
 
-	addTag(ev) {
-		const {tag} = getFormData(ev);
-		Cards.update(_id, {
-			$addToSet: {tags: tag}
-		});
-	},
+				Cards.update(related, {
+					$pull: {related: _id},
+				});
+			}
+		},
 
-	removeTag(tag) {
-		Cards.update(_id, {
-			$pull: {tags: tag}
-		});
-	},
+		addTag(ev) {
+			const {tag} = getFormData(ev);
+			Cards.update(_id, {
+				$addToSet: {tags: tag}
+			});
+		},
 
-	isSelected: Session.get('selectedCard') === _id,
-}));
+		removeTag(tag) {
+			confirm(`Remove tag ${tag} from ${title}?`) && Cards.update(_id, {
+				$pull: {tags: tag}
+			});
+		},
+
+		isSelected: Session.get('selectedCard') === _id,
+	};
+});
 
 const connectAddRelated = withTracker(({card}) => ({
 	addRelated(related) {
