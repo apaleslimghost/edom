@@ -121,8 +121,12 @@ ul, ol, blockquote {
 	padding-left: 1em;
 }
 
+ul, ol {
+	margin-left: .25em;
+}
+
 blockquote {
-	border-left: 3px solid grey;
+	border-left: .25em solid grey;
 }
 `;
 
