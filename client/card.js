@@ -116,6 +116,11 @@ img {
 	height: auto;
 }
 
+ul, ol, blockquote {
+	margin-left: 0;
+	padding-left: 1em;
+}
+
 blockquote {
 	border-left: 3px solid grey;
 }
