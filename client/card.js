@@ -115,6 +115,10 @@ img {
 	max-width: 100%;
 	height: auto;
 }
+
+blockquote {
+	border-left: 3px solid grey;
+}
 `;
 
 const ShowCard = connectCard(({
