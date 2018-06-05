@@ -30,7 +30,7 @@ const connectCard = withTracker(({_id, title, related}) => {
 		removeRelated(related) {
 			const relatedCard = relatedCards.find(({_id}) => _id === related);
 			
-			if(config(`Unlink ${title} and ${relatedCard.title}?`)) {
+			if(confirm(`Unlink ${title} and ${relatedCard.title}?`)) {
 				Cards.update(_id, {
 					$pull: {related},
 				});
