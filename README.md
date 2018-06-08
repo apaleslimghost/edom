@@ -1,4 +1,4 @@
-# edom
+# Edom
 
 An Adversary Mapper for [Night's Black Agents](http://pelgranepress.com)
 
