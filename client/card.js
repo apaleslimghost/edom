@@ -263,10 +263,10 @@ export const EditCard = editCardAction(({
 				<input type='checkbox' name='_tag' defaultChecked />
 			</v.Label>}
 
-			{_id && <v.Button color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button>}
+			{_id && <v.Button type='button' color='crimson' onClick={prevent(deleteCard)}>Delete</v.Button>}
 
 			<v.Right>
-				{setEditing && <v.Button color='grey' onClick={prevent(() => setEditing(false))}>Cancel</v.Button>}
+				{setEditing && <v.Button type='button' color='grey' onClick={prevent(() => setEditing(false))}>Cancel</v.Button>}
 				<v.Button color={!_id ? 'mediumseagreen' : undefined}>{_id ? 'Save' : 'Add'}</v.Button>
 			</v.Right>
 		</v.List>
