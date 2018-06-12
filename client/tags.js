@@ -44,15 +44,13 @@ const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, rem
 	{(!!filterTags.length || !!unfilteredTags.length) && <>
 		{!!filterTags.length && <>
 			<strong>Filter:</strong>
-			<v.List>
+			<>
 				{filterTags.map(tag => <v.ColoredTag key={tag} onClick={() => removeFromFilter(tag)}>{tag}</v.ColoredTag>)}
 				<v.Button onClick={clearFilter} color='grey' small>×</v.Button>
-			</v.List>
+			</>
 		</>}
 		{!!filterTags.length && !!unfilteredTags.length && <v.Sep />}
-		<v.List>
-			{unfilteredTags.map(tag => <v.ColoredTag onClick={() => addToFilter(tag)} key={tag}>{tag}</v.ColoredTag>)}
-		</v.List>
+		{unfilteredTags.map(tag => <v.ColoredTag onClick={() => addToFilter(tag)} key={tag}>{tag}</v.ColoredTag>)}
 	</>}
 
 	<datalist id='tags-list'>
