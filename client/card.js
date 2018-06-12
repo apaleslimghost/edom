@@ -149,6 +149,12 @@ const ShowCard = connectCard(({
 	<v.Title bold={isSelected}>
 		<v.List>
 			{!!sortedIndex && <v.Tag color='grey' small>{sortedIndex}</v.Tag>}
+			{tags.includes('Adversary') &&
+				<v.List>
+					<span>Adversary pool</span>
+					<v.Tag color='steelblue' small>{2 * related.length}</v.Tag>
+			 	</v.List>
+			}
 			<TitleLink href={`#${isSelected ? '' : _id}`} onClick={setSelected}>{title}</TitleLink>
 		</v.List>
 	</v.Title>
