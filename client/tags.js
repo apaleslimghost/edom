@@ -41,7 +41,7 @@ const connectTags = withTracker(() => {
 });
 
 const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, removeFromFilter, clearFilter}) => <>
-	{(!!filterTags.length || !!unfilteredTags.length) && <v.List>
+	{(!!filterTags.length || !!unfilteredTags.length) && <>
 		{!!filterTags.length && <>
 			<strong>Filter:</strong>
 			<v.List>
@@ -53,7 +53,7 @@ const Tags = connectTags(({filterTags, unfilteredTags, allTags, addToFilter, rem
 		<v.List>
 			{unfilteredTags.map(tag => <v.ColoredTag onClick={() => addToFilter(tag)} key={tag}>{tag}</v.ColoredTag>)}
 		</v.List>
-	</v.List>}
+	</>}
 
 	<datalist id='tags-list'>
 		{allTags.map(tag => <option key={tag} value={tag} />)}
