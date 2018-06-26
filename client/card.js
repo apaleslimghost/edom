@@ -114,7 +114,13 @@ const TitleLink = styled.a`
 	}
 `;
 
-const MD = styled(Markdown)`
+const ExternalLink = props => <a target='_blank' {...props} />;
+
+const MD = styled(Markdown).attrs({
+	renderers: {
+		link: ExternalLink,
+	},
+})`
 img {
 	max-width: 100%;
 	height: auto;
