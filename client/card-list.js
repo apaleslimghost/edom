@@ -73,19 +73,18 @@ const Split = styled.hr`
 	margin: 3em 0;
 `;
 
-const CardList = connectCardList(({cards, linkedCards, selectedCard}) => <>
-	<v.Grid>
-		<EditCard prelinked={selectedCard} />
-		{linkedCards.map(card => <Card key={card._id} {...card} />)}
-	</v.Grid>
-	{!!cards.length && <>
+const CardList = connectCardList(({cards, linkedCards, selectedCard}) => {
+	return <>
+		{!!linkedCards.length && <v.Grid>
+			<EditCard prelinked={selectedCard} />
+			{linkedCards.map(card => <Card key={card._id} {...card} />)}
+		</v.Grid>}
 		{!!linkedCards.length && <Split />}
 		<v.Grid>
 			<EditCard />
-
 			{cards.map(card => <Card key={card._id} {...card} />)}
 		</v.Grid>
-	</>}
-</>);
+	</>
+};
 
 export default CardList;
