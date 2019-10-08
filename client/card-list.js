@@ -74,11 +74,10 @@ const Split = styled.hr`
 `;
 
 const CardList = connectCardList(({cards, linkedCards, selectedCard}) => <>
-	{!!linkedCards.length && <v.Grid>
+	<v.Grid>
 		<EditCard prelinked={selectedCard} />
-
 		{linkedCards.map(card => <Card key={card._id} {...card} />)}
-	</v.Grid>}
+	</v.Grid>
 	{!!cards.length && <>
 		{!!linkedCards.length && <Split />}
 		<v.Grid>
